@@ -11,12 +11,20 @@ router.post("/signup", async (req, res) => {
         // console.log(User)
         console.log(req.body);
         const existingUser = await User.findOne({ email: req.body.email });
-        console.log(existingUser);
+        console.log("Existing user " + existingUser);
         if (!existingUser) {
             //to get last user for userid
             // let value = 1200;
             const value = await User.find().sort({ _id: -1 }).limit(1);
-            const userid = parseInt(value[0].userid.split("D")[1]) + 1;
+            console.log(value.length)
+            let userid;
+            if(value.length!=0){
+                userid = parseInt(value[0].userid.split("D")[1]) + 1;
+                console.log(userid)
+            }else{
+                userid = 1200
+                console.log(userid)
+            }
             //   console.log(value[0].userid.split("D")[1]);
 
             //hashing the password
