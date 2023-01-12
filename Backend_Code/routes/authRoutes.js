@@ -49,7 +49,7 @@ router.post("/signup", async (req, res) => {
             res.status(401).json("Email id already exist");
         }
     } catch (e) {
-        res.status(400).json({
+        res.status(500).json({
             status: "Failed",
             message: e.message,
         });
@@ -108,7 +108,7 @@ router.post("/login", async (req, res) => {
             
         }
     } catch (e) {
-        res.json({
+        res.status(500).json({
             status: "Failed",
             message: e.message,
         });
