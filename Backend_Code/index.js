@@ -12,6 +12,7 @@ mongoose.connect(
       console.log(err);
     }
   );
+  
 const bodyParser = require("body-parser");
 const connect = require("./connection/connect");
 const authRoutes = require("./routes/authRoutes");
