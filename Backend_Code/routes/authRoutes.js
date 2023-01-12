@@ -17,7 +17,7 @@ router.post("/signup", async (req, res) => {
             // let value = 1200;
             const value = await User.find().sort({ _id: -1 }).limit(1);
             const userid = parseInt(value[0].userid.split("D")[1]) + 1;
-              console.log(value[0].userid.split("D")[1]);
+            //   console.log(value[0].userid.split("D")[1]);
 
             //hashing the password
             bcrypt.hash(req.body.password, 10, async function (err, hash) {

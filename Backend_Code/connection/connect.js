@@ -8,18 +8,19 @@ const dotenv = require("dotenv");
 dotenv.config();
 const mongoose = require("mongoose");
 mongoose.set('strictQuery', true)
-mongoose.connect(process.env.DB_URL, {})
-.then(() => {
-  console.log("CONNECTED TO DATABASE");
-})
+// mongoose.connect(process.env.DB_URL, {})
+// .then(() => {
+//   console.log("CONNECTED TO DATABASE");
+// })
 
-// mongoose.connect(
-//   "mongodb+srv://lalatendu_14:Liku2324@cluster0.cb2danw.mongodb.net/realestateproject?retryWrites=true&w=majority",
-//   { useNewUrlParser: true, useUnifiedTopology: true },
-//   () => {
-//     console.log("successfully connected to db");
-//   },
-//   (err) => {
-//     console.log(err);
-//   }
-// );
+
+mongoose.connect(
+      "mongodb+srv://yogeshthakare402:Yogesh402@Real_Estate_app.nkhpbif.mongodb.net/Real_Estate_app?retryWrites=true&w=majority",
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  () => {
+    console.log("successfully connected to db");
+  },
+  (err) => {
+    console.log(err);
+  }
+);
