@@ -1,18 +1,5 @@
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
-
-mongoose.connect(
-    "mongodb+srv://yogeshthakare402:Yogesh402@Real_Estate_app.nkhpbif.mongodb.net/Real_Estate_app?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    () => {
-      console.log("successfully connected to db");
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-  
 const bodyParser = require("body-parser");
 const connect = require("./connection/connect");
 const authRoutes = require("./routes/authRoutes");
@@ -95,4 +82,4 @@ app.use("/api/users/property", addPropertyRoutes);
 app.use("/api/users/property", propertyListRoutes);
 
 
-app.listen(process.env.PORT || 8000, () => console.log('Server is running at 8000'))
+app.listen(process.env.PORT || 8000, () => console.log('Server is running at 8000'), connect)
