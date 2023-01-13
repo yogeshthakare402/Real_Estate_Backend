@@ -1,14 +1,30 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const connect = require("./connection/connect");
+// const connect = require("./connection/connect");
 const authRoutes = require("./routes/authRoutes");
 const cookieParser = require("cookie-parser");
 var cors = require("cors");
 const propertyListRoutes = require("./routes/propertyListRoutes");
 const addPropertyRoutes = require("./routes/addPropertyRoutes");
 var jwt = require('jsonwebtoken');
-const User = require('./models/user')
+const User = require('./models/user');
+
+//not working if in connection page
+const dotenv = require("dotenv");
+dotenv.config();
+const mongoose = require("mongoose");
+mongoose.set('strictQuery', true);
+mongoose.connect(
+    "mongodb+srv://yogeshthakare402:Yogesh402@Real_Estate_app.nkhpbif.mongodb.net/Real_Estate_app?retryWrites=true&w=majority",
+{ useNewUrlParser: true, useUnifiedTopology: true },
+() => {
+  console.log("successfully connected to db");
+},
+(err) => {
+  console.log(err);
+}
+);
 
 
 // const fileUpload = require("express-fileupload");
@@ -82,4 +98,4 @@ app.use("/api/users/property", addPropertyRoutes);
 app.use("/api/users/property", propertyListRoutes);
 
 
-app.listen(process.env.PORT || 8000, () => console.log('Server is running at 8000'), connect)
+app.listen(process.env.PORT || 8000, () => console.log('Server is running at 8000'))
