@@ -7,7 +7,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const mongoose = require("mongoose");
-mongoose.set('strictQuery', true)
+mongoose.set('strictQuery', true);
+
 // mongoose.connect(process.env.DB_URL, {})
 // .then(() => {
 //   console.log("CONNECTED TO DATABASE");
