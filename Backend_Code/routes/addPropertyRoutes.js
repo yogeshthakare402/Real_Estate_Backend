@@ -85,5 +85,24 @@ router.post("/", upload.array('items', 5), async (req, res) => {
         })
     }
 });
+router.patch('/:id',async (req,res)=>{
+    try {
+        let property = await Property.findByIdAndUpdate({__id:req.params.id},{status: "Sold"},{new:true});
+        if(property){
+            res.status(200).json({
+                status: "Success",
+                detail: "Property Updated"
+            })
+        }else{
+            res.status(401).json({
+                status: "Failed",
+                detail: "Property Can't Update"
+            })
+        }
+        
+    } catch (error) {
+        
+    }
+})
 
 module.exports = router;
