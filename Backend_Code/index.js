@@ -52,9 +52,11 @@ app.use("/api/users/property", (req, res, next) => {
         console.log(req.headers.token)
         if (req.headers.token) {
             const token = req.headers.token;
+            // console.log(token)
             if (token) {
+                console.log("got the tojken")
                 let secret = req.headers.id
-                // console.log(secret)
+                console.log(secret)
                 jwt.verify(token, secret, async function (err, decoded) {
                     if (err) {
                         return res.status(403).json({
@@ -67,7 +69,7 @@ app.use("/api/users/property", (req, res, next) => {
                     console.log(user)
                     req.user = user.email;
                     // req.user = decoded.data;
-                    console.log("add Property with user")
+                    console.log("Token Verified You can access routes")
                     next();
                 });
             } else {

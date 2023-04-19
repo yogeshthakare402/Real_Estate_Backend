@@ -21,19 +21,24 @@ const upload = multer({
 
 router.post("/", upload.array('items', 5), async (req, res) => {
     try {
-        console.log(req.body)
-        console.log(req.files)
+        console.log(req.body);
+        console.log(req.files);
         console.log("user in add " + req.user)
         // console.log("this is req.body" + req.body + "Checkthis")
         const ppd_id = "PPD" + Math.floor((Math.random() * 9999) + 999);
         const views = parseInt(Math.random() * 30);
         const daysLeft = parseInt(Math.random() * 50);
-
+        let state = ""
+        if(daysLeft===0){
+            state = "Sold"
+        }else{
+            state = "Unsold"
+        }
         const property = await Property.create({
                 ppdId: ppd_id,
                 image: req.files,
                 views: views,
-                status: "Unsold",
+                status: state,
                 daysLeft: daysLeft,
                 property: req.body.property,
                 length: req.body.length,
@@ -85,9 +90,11 @@ router.post("/", upload.array('items', 5), async (req, res) => {
         })
     }
 });
-router.patch('/:id',async (req,res)=>{
+router.patch('/sale/:id',async (req,res)=>{
     try {
-        let property = await Property.findByIdAndUpdate({__id:req.params.id},{status: "Sold"},{new:true});
+        console.log("updating sales status")
+        console.log(req.body)
+        let property = await Property.findByIdAndUpdate({_id:req.params.id},{$set:req.body});
         if(property){
             res.status(200).json({
                 status: "Success",
@@ -101,7 +108,36 @@ router.patch('/:id',async (req,res)=>{
         }
         
     } catch (error) {
+        res.status(500).json({
+            status: "failed",
+            message: error.message
+        })
+    }
+})
+
+router.patch('/:id',async (req,res)=>{
+    try {
+        console.log("update Property")
+        // console.log(req.body);
+        let property = await Property.findOneAndUpdate({_id:req.params.id},{$set:req.body});
+        if(property){
+            // console.log(property)
+            res.status(200).json({
+                status: "Success",
+                detail: "Property Updated"
+            })
+        }else{
+            res.status(401).json({
+                status: "Failed",
+                detail: "Property Can't Update"
+            })
+        }
         
+    } catch (error) {
+        res.status(500).json({
+            status: "failed",
+            message: error.message
+        })
     }
 })
 
