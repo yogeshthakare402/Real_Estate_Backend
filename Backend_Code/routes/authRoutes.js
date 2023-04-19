@@ -102,7 +102,8 @@ router.post("/login", async (req, res) => {
                         //to show userid and email in listing page
                         details: {
                             userid: existingUser.userid,
-                            email: existingUser.email.split("@")[0],
+                            email:existingUser.email,
+                            name: existingUser.email.split("@")[0],
                         },
                         token : token
                     });
