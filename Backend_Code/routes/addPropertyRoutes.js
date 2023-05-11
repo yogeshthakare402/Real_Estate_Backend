@@ -4,7 +4,10 @@ let mongoose = require('mongoose');
 let router = express.Router();
 let User = require("../models/user");
 let Property = require('../models/property');
+let cloudinary = require('../models/cloudinary');
+let fs = require('fs');
 
+//temporary storage until it creates cloudinary url
 const multerStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "public");
@@ -19,24 +22,43 @@ const upload = multer({
     storage: multerStorage,
 });
 
-router.post("/", upload.array('items', 5), async (req, res) => {
+
+router.post("/", upload.array('imgfiles', 5), async (req, res) => {
     try {
-        console.log(req.body);
-        console.log(req.files);
-        console.log("user in add " + req.user)
-        // console.log("this is req.body" + req.body + "Checkthis")
+        console.log("Post Data");
+        // console.log(req.body);
+        // console.log(req.files);
+        // console.log("user in add " + req.user)
         const ppd_id = "PPD" + Math.floor((Math.random() * 9999) + 999);
         const views = parseInt(Math.random() * 30);
         const daysLeft = parseInt(Math.random() * 50);
         let state = ""
-        if(daysLeft===0){
+        if (daysLeft === 0) {
             state = "Sold"
-        }else{
+        } else {
             state = "Unsold"
-        }
-        const property = await Property.create({
+        };
+
+        const imgfiles = req.files;
+        const getImgUrls = async (imgfiles) => {
+            const imgurls = []
+            // console.log(imgfiles);
+            // console.log("loop started");
+            for (const file of imgfiles) {
+                const { path } = file;
+                let newpath = await cloudinary.uploads(path);
+                // console.log(newpath.url);
+                imgurls.push(newpath.url);
+                console.log(imgurls);
+                fs.unlinkSync(path)
+            }
+
+            // console.log("loop end");
+            // console.log(imgurls);
+
+            const property = await Property.create({
                 ppdId: ppd_id,
-                image: req.files,
+                image: imgurls,
                 views: views,
                 status: state,
                 daysLeft: daysLeft,
@@ -75,13 +97,16 @@ router.post("/", upload.array('items', 5), async (req, res) => {
                 landmark: req.body.landmark,
                 latitude: req.body.latitude,
                 longitude: req.body.longitude,
-                userid:req.user
-           })
+                userid: req.user
+            })
 
-           res.status(200).json({
+            res.status(200).json({
                 status: "Success",
                 property
             })
+        }
+
+        getImgUrls(imgfiles);
 
     } catch (e) {
         res.status(500).json({
@@ -90,23 +115,23 @@ router.post("/", upload.array('items', 5), async (req, res) => {
         })
     }
 });
-router.patch('/sale/:id',async (req,res)=>{
+router.patch('/sale/:id', async (req, res) => {
     try {
         console.log("updating sales status")
         console.log(req.body)
-        let property = await Property.findByIdAndUpdate({_id:req.params.id},{$set:req.body});
-        if(property){
+        let property = await Property.findByIdAndUpdate({ _id: req.params.id }, { $set: req.body });
+        if (property) {
             res.status(200).json({
                 status: "Success",
                 detail: "Property Updated"
             })
-        }else{
+        } else {
             res.status(401).json({
                 status: "Failed",
                 detail: "Property Can't Update"
             })
         }
-        
+
     } catch (error) {
         res.status(500).json({
             status: "failed",
@@ -115,28 +140,52 @@ router.patch('/sale/:id',async (req,res)=>{
     }
 })
 
-router.patch('/:id',async (req,res)=>{
+router.patch('/:id', async (req, res) => {
     try {
         console.log("update Property")
         // console.log(req.body);
-        let property = await Property.findOneAndUpdate({_id:req.params.id},{$set:req.body});
-        if(property){
+        let property = await Property.findOneAndUpdate({ _id: req.params.id }, { $set: req.body });
+        if (property) {
             // console.log(property)
             res.status(200).json({
                 status: "Success",
                 detail: "Property Updated"
             })
-        }else{
+        } else {
             res.status(401).json({
                 status: "Failed",
                 detail: "Property Can't Update"
             })
         }
-        
+
     } catch (error) {
         res.status(500).json({
             status: "failed",
             message: error.message
+        })
+    }
+})
+
+router.delete('/delete/:id', async(req, res) => {
+    try {
+        console.log("I am inside delete Property with id")
+        console.log(req.params)
+        const property = await Property.findByIdAndDelete({_id: req.params.id});
+        if(property){
+            // console.log(property);
+            res.json({
+                status: "Success",
+            })
+        }else {
+            res.json({
+                status: "Failed",
+                message : "Property Not Found"
+            })
+        }
+    } catch (e) {
+        res.status(500).json({
+            status: "Failed",
+            message: e.message
         })
     }
 })

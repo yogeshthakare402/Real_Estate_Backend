@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const fileUpload = require('express-fileupload')
 // const connect = require("./connection/connect");
 const authRoutes = require("./routes/authRoutes");
 const cookieParser = require("cookie-parser");
@@ -48,15 +49,15 @@ app.use('/public', express.static('public'))
 
 app.use("/api/users/property", (req, res, next) => {
     try {
-
-        console.log(req.headers.token)
+        console.log("Authenticate user");
+        // console.log(req.headers.token)
         if (req.headers.token) {
             const token = req.headers.token;
             // console.log(token)
             if (token) {
-                console.log("got the tojken")
+                // console.log("got the token")
                 let secret = req.headers.id
-                console.log(secret)
+                // console.log(secret)
                 jwt.verify(token, secret, async function (err, decoded) {
                     if (err) {
                         return res.status(403).json({
@@ -64,9 +65,9 @@ app.use("/api/users/property", (req, res, next) => {
                             message: "Invalid token"
                         })
                     }
-                    console.log(decoded)
+                    // console.log(decoded)
                     const user = await User.findOne({ _id: decoded.data });
-                    console.log(user)
+                    // console.log(user)
                     req.user = user.email;
                     // req.user = decoded.data;
                     console.log("Token Verified You can access routes")
