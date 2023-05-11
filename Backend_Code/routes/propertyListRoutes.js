@@ -7,15 +7,18 @@ const router = express.Router();
 
 router.use(bodyParser.json());
 
-router.get('/', async(req, res) => {
+router.get('/:currentPage', async(req, res) => {
     try {
         console.log("I am inside get property");
+        // console.log(req.params.currentPage);
+        let page = req.params.currentPage;
+        // console.log(page);
         //here we are rendering the image giveing it in ressponse
-        console.log("User " + req.user)
-        const property = await Property.find({userid:req.user})
-
+        // console.log("User " + req.user)
+        const property = await Property.find({userid:req.user}).skip(page*10).limit(10)
+        // console.log(property);
         res.json({
-            status: "Sucess",
+            status: "Success",
             property
         })
     } catch (e) {
@@ -33,7 +36,7 @@ router.get('/:ppdId', async(req, res) => {
         const property = await Property.findOne({ppdId: req.params.ppdId});
         if(property){
             res.json({
-                status: "Sucess",
+                status: "Success",
                 property
             })
         }else {
@@ -49,6 +52,8 @@ router.get('/:ppdId', async(req, res) => {
         })
     }
 })
+
+
 
 
 module.exports = router;
