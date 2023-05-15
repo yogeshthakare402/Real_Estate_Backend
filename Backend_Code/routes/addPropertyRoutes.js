@@ -29,7 +29,10 @@ router.post("/", upload.array('imgfiles', 5), async (req, res) => {
         // console.log(req.body);
         // console.log(req.files);
         // console.log("user in add " + req.user)
-        const ppd_id = "PPD" + Math.floor((Math.random() * 9999) + 999);
+        let count = await Property.countDocuments();
+        console.log(count);
+
+        const ppd_id = "PPD" + (1000 + count);
         const views = parseInt(Math.random() * 30);
         const daysLeft = parseInt(Math.random() * 50);
         let state = ""
@@ -40,20 +43,21 @@ router.post("/", upload.array('imgfiles', 5), async (req, res) => {
         };
 
         const imgfiles = req.files;
+        console.log(imgfiles)
         const getImgUrls = async (imgfiles) => {
             const imgurls = []
             // console.log(imgfiles);
             // console.log("loop started");
-            for (const file of imgfiles) {
-                const { path } = file;
-                let newpath = await cloudinary.uploads(path);
-                // console.log(newpath.url);
-                imgurls.push(newpath.url);
-                console.log(imgurls);
-                fs.unlinkSync(path)
+            if(imgfiles.length>0){
+                for (const file of imgfiles) {
+                    const { path } = file;
+                    let newpath = await cloudinary.uploads(path);
+                    // console.log(newpath.url);
+                    imgurls.push(newpath.url);
+                    console.log(imgurls);
+                    fs.unlinkSync(path)
+                }
             }
-
-            // console.log("loop end");
             // console.log(imgurls);
 
             const property = await Property.create({
@@ -118,7 +122,7 @@ router.post("/", upload.array('imgfiles', 5), async (req, res) => {
 router.patch('/sale/:id', async (req, res) => {
     try {
         console.log("updating sales status")
-        console.log(req.body)
+        console.log(req.body);
         let property = await Property.findByIdAndUpdate({ _id: req.params.id }, { $set: req.body });
         if (property) {
             res.status(200).json({
@@ -144,6 +148,7 @@ router.patch('/:id', async (req, res) => {
     try {
         console.log("update Property")
         // console.log(req.body);
+
         let property = await Property.findOneAndUpdate({ _id: req.params.id }, { $set: req.body });
         if (property) {
             // console.log(property)
@@ -169,7 +174,8 @@ router.patch('/:id', async (req, res) => {
 router.delete('/delete/:id', async(req, res) => {
     try {
         console.log("I am inside delete Property with id")
-        console.log(req.params)
+        console.log(req.params);
+        
         const property = await Property.findByIdAndDelete({_id: req.params.id});
         if(property){
             // console.log(property);
